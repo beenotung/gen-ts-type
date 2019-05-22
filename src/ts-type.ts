@@ -43,7 +43,7 @@ export function getTsType(
           const currentIndent = options.currentIndent || '';
           const indentStep = options.indentStep || '  ';
           const innerIndent = currentIndent + indentStep;
-          let res = currentIndent + '{';
+          let res = '{';
           Object.entries(o).forEach(([k, v]) => {
             res += `\n${innerIndent}${JSON.stringify(k)}: ${getTsType(v, {
               ...options,
