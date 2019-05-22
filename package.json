@@ -1,13 +1,9 @@
 {
   "name": "gen-ts-type",
   "version": "1.0.0",
-  "description": "",
+  "description": "Generate Typescript type from sample data",
   "keywords": [],
-  "author": {
-    "name": "Beeno Tung",
-    "email": "aabbcc1241@yahoo.com.hk",
-    "url": "https://beeno-tung.surge.sh"
-  },
+  "author": "Beeno Tung <aabbcc1241@yahoo.com.hk> (https://beeno-tung.surge.sh)",
   "license": "BSD-2-Clause",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -45,5 +41,13 @@
     "tslint": "^5.16.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.4.5"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beenotung/gen-ts-type.git"
+  },
+  "bugs": {
+    "url": "https://github.com/beenotung/gen-ts-type/issues"
+  },
+  "homepage": "https://github.com/beenotung/gen-ts-type#readme"
 }
