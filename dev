@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo 'export type Package = ' | tee out.ts
+format=1 allowEmptyArray=1 ts-node src/cli.ts package.json | tee -a out.ts

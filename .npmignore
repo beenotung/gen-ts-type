@@ -5,3 +5,4 @@ tslint.json
 .editorconfig
 .prettierrc
 *.tgz
+/dev
