@@ -1,7 +1,7 @@
 import { readFile } from '@beenotung/tslib/fs';
+import { catchMain } from '@beenotung/tslib/node';
 import { readStreamAllLine } from '@beenotung/tslib/stream';
 import { getTsType } from './ts-type';
-import { catchMain } from '@beenotung/tslib/node';
 
 export async function main(filename?: string) {
   let content: string;

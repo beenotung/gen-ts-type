@@ -8,9 +8,9 @@ export function setTsType(name: string, type: string): void {
 export function getTsType(
   o: any,
   options: {
-    format?: boolean
-    currentIndent?: string | '',
-    indentStep?: string | '  ',
+    format?: boolean;
+    currentIndent?: string | '';
+    indentStep?: string | '  ';
   } & { allowEmptyArray?: boolean } = {},
 ): string {
   const type = typeof o;
@@ -45,7 +45,10 @@ export function getTsType(
           const innerIndent = currentIndent + indentStep;
           let res = currentIndent + '{';
           Object.entries(o).forEach(([k, v]) => {
-            res += `\n${innerIndent}${JSON.stringify(k)}: ${getTsType(v, { ...options, currentIndent: innerIndent })};`;
+            res += `\n${innerIndent}${JSON.stringify(k)}: ${getTsType(v, {
+              ...options,
+              currentIndent: innerIndent,
+            })};`;
           });
           res += '\n' + currentIndent + '}';
           return res;
