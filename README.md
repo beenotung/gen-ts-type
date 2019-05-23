@@ -27,6 +27,20 @@ const code = `export type User = ${UserType};`
 fs.writeFileSync('types.ts', code);
 ```
 
-## Todo
-1. allow option to detect enum
-2. allow option to treat array as strict tuple (e.g. `[number, string, string]`)
+## Features
+
+### Supported features
+- string
+- named custom type
+- number
+- boolean
+- bigint
+- symbol (not specific)
+- Date
+- Array (single-type / multi-type)
+- Object
+
+### Todo features
+- Tuple (specific array) (e.g. `[number, string, string]`)
+- specific symbol / string / number
+- Enum
