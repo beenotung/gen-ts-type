@@ -12,8 +12,9 @@ export async function main(filename?: string) {
   }
   const json = JSON.parse(content);
   const type = getTsType(json, {
-    allowEmptyArray: !!process.env.allowEmptyArray,
     format: !!process.env.format,
+    allowEmptyArray: !!process.env.allowEmptyArray,
+    allowMultiTypedArray: !!process.env.allowMultiTypedArray,
   });
   console.log(type);
 }

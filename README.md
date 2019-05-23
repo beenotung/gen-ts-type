@@ -11,8 +11,8 @@ npm i -g gen-ts-type
 ## Usage
 ### From cli
 ```bash
-echo 'export type Package = ' | tee out.ts
-format=1 allowEmptyArray=1 ts-node src/cli.ts package.json | tee -a out.ts
+echo 'export type Package = ' | tee package.d.ts
+format=1 allowEmptyArray=1 allowMultiTypedArray=1 ts-node src/cli.ts package.json | tee -a package.d.ts
 ```
 ### From typescript
 ```typescript
@@ -26,3 +26,7 @@ const UserType = getTsType(
 const code = `export type User = ${UserType};`
 fs.writeFileSync('types.ts', code);
 ```
+
+## Todo
+1. allow option to detect enum
+2. allow option to treat array as strict tuple (e.g. `[number, string, string]`)

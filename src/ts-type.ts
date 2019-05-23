@@ -8,10 +8,14 @@ export function setTsType(name: string, type: string): void {
 export function getTsType(
   o: any,
   options: {
+    /* indentation options */
     format?: boolean;
     currentIndent?: string | '';
     indentStep?: string | '  ';
-  } & { allowEmptyArray?: boolean } = {},
+    /* array options */
+    allowEmptyArray?: boolean;
+    allowMultiTypedArray?: boolean;
+  } = {},
 ): string {
   const type = typeof o;
   switch (type) {
@@ -30,6 +34,9 @@ export function getTsType(
       if (o instanceof Date) {
         return 'Date';
       }
+      const currentIndent = options.currentIndent || '';
+      const indentStep = options.indentStep || '  ';
+      const innerIndent = currentIndent + indentStep;
       if (Array.isArray(o)) {
         if (o.length < 1) {
           if (options.allowEmptyArray) {
@@ -37,12 +44,23 @@ export function getTsType(
           }
           throw new TypeError('cannot determine type of empty array');
         }
-        return `Array<${getTsType(o[0], options)}>`;
+        const childTypes = Array.from(
+          new Set(
+            o.map(x =>
+              getTsType(x, { ...options, currentIndent: innerIndent }),
+            ),
+          ),
+        );
+        if (childTypes.length === 1) {
+          return `Array<${getTsType(o[0], options)}>`;
+        }
+        if (options.allowMultiTypedArray) {
+          return `Array<${childTypes.join(' | ')}>`;
+        }
+        console.error('array of different types, childTypes:', childTypes);
+        throw new Error('array of different types');
       } else {
         if (options.format) {
-          const currentIndent = options.currentIndent || '';
-          const indentStep = options.indentStep || '  ';
-          const innerIndent = currentIndent + indentStep;
           let res = '{';
           Object.entries(o).forEach(([k, v]) => {
             res += `\n${innerIndent}${JSON.stringify(k)}: ${getTsType(v, {
