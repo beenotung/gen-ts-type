@@ -1,6 +1,6 @@
 {
   "name": "gen-ts-type",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Generate Typescript type from sample data",
   "keywords": [
     "typescript",
