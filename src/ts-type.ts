@@ -5,6 +5,7 @@ export function setTsType(name: string, type: string): void {
   typeMap.set(name, type);
 }
 
+/** will rename to genTsType in next major release */
 export function getTsType(
   o: any,
   options: {
@@ -80,3 +81,6 @@ export function getTsType(
       throw new TypeError('unknown type: ' + type);
   }
 }
+
+/** will rename to genTsType in next major release */
+export let genTsType = getTsType;
