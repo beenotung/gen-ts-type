@@ -5,4 +5,6 @@ tslint.json
 .editorconfig
 .prettierrc
 *.tgz
+pnpm-lock.yaml
 /dev
+/test/
