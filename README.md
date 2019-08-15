@@ -12,7 +12,7 @@ npm i -g gen-ts-type
 ### From cli
 ```bash
 echo 'export type Package = ' | tee package.d.ts
-format=1 allowEmptyArray=1 allowMultiTypedArray=1 ts-node src/cli.ts package.json | tee -a package.d.ts
+format=1 allowEmptyArray=1 allowMultiTypedArray=1 gen-ts-type package.json | tee -a package.d.ts
 ```
 ### From typescript
 ```typescript
