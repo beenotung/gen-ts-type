@@ -8,3 +8,4 @@ tslint.json
 pnpm-lock.yaml
 /dev
 /test/
+package.d.ts
