@@ -1,8 +1,13 @@
-import { getTsType } from '../src/ts-type';
+import { genTsType } from '../src/ts-type';
 
 console.log(
-  getTsType(
+  genTsType(
     { user: 'Alice', friends: [{ user: 'Bob', since: new Date() }] },
     { format: true },
   ),
+);
+console.log(
+  genTsType([{ name: 'Alice' }, { name: 'Bob', nickname: 'Charlie' }], {
+    allowOptionalFieldInArray: true,
+  }),
 );

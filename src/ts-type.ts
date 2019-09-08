@@ -1,3 +1,4 @@
+import { mapGetOrSetDefault } from '@beenotung/tslib/map';
 /* name -> type */
 import { genFunctionType } from './function-type';
 
@@ -59,6 +60,7 @@ export function genTsType(
             string,
             { types: Set<string>; count: number }
           >();
+          let total = 0;
           for (const x of o) {
             if (
               x &&
@@ -68,28 +70,36 @@ export function genTsType(
               !(x instanceof Set)
             ) {
               // really object
+              total++;
               for (const [key, value] of Object.entries(x)) {
                 const type = genTsType(value, options);
+                const field = mapGetOrSetDefault(fields, key, () => ({
+                  types: new Set(),
+                  count: 0,
+                }));
+                field.count++;
+                field.types.add(type);
               }
             } else {
               // not object
               nonObjectTypes.add(genTsType(x, options));
             }
           }
-        }
-        if (
-          options.allowOptionalFieldInArray &&
-          o.every(
-            x =>
-              x &&
-              typeof x === 'object' &&
-              !(x instanceof Date) &&
-              !(x instanceof Map) &&
-              !(x instanceof Set),
-          )
-        ) {
-          const fields = new Map<string, number>();
-          const total = 0;
+          let res = 'Array<{';
+          fields.forEach((field, key) => {
+            res += '\n' + innerIndent + JSON.stringify(key);
+            if (field.count === total) {
+              // all items has this field
+              res += ':';
+            } else {
+              // only some items has this field, this field is optional
+              res += '?:';
+            }
+            res += ' ' + Array.from(field.types).join(' | ') + ';';
+          });
+          res += '\n' + currentIndent + '}>';
+          nonObjectTypes.forEach(type => (res += ' | ' + type));
+          return res;
         }
         const childTypes = Array.from(
           new Set(o.map(x => genTsType(x, nextLevelOption))),
