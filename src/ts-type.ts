@@ -1,4 +1,6 @@
 /* name -> type */
+import { genFunctionType } from './function-type';
+
 const typeMap = new Map<string, string>();
 
 export function setTsType(name: string, type: string): void {
@@ -20,6 +22,8 @@ export function getTsType(
 ): string {
   const type = typeof o;
   switch (type) {
+    case 'function':
+      return genFunctionType(o);
     case 'string':
       if (typeMap.has(o)) {
         return typeMap.get(o);

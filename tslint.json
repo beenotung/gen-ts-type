@@ -6,6 +6,7 @@
     "node_modules/tslint-eslint-rules/dist/rules"
   ],
   "rules": {
+    "ban-types": false,
     "no-reference": true,
     "only-arrow-functions": false,
     "max-classes-per-file": [
