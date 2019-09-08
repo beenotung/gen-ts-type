@@ -113,7 +113,30 @@ export function genTsType(
         console.error('array of different types, childTypes:', childTypes);
         throw new Error('array of different types');
       }
-      // TODO set, map
+      if (o instanceof Set) {
+        if (o.size < 1) {
+          if (options.allowEmptyArray) {
+            return 'Set<any>';
+          }
+          throw new TypeError('cannot determine type of empty set');
+        }
+        return genTsType(Array.from(o), options).replace('Array', 'Set');
+      }
+      if (o instanceof Map) {
+        if (o.size < 1) {
+          if (options.allowEmptyArray) {
+            return 'Map<any>';
+          }
+          throw new TypeError('cannot determine type of empty map');
+        }
+        const keyType = Array.from(
+          new Set(Array.from(o.keys()).map(x => genTsType(x, options))),
+        ).join(' | ');
+        const valueType = Array.from(
+          new Set(Array.from(o.values()).map(x => genTsType(x, options))),
+        ).join(' | ');
+        return `Map<${keyType}, ${valueType}>`;
+      }
       // really object
       if (options.format) {
         let res = '{';

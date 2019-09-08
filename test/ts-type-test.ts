@@ -11,3 +11,6 @@ console.log(
     allowOptionalFieldInArray: true,
   }),
 );
+console.log(genTsType(new Set([1, 2])));
+console.log(genTsType(new Set([1, 2, 'str']), { allowMultiTypedArray: true }));
+console.log(genTsType(new Map([['age', 12]])));
