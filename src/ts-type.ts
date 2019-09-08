@@ -8,7 +8,7 @@ export function setTsType(name: string, type: string): void {
 }
 
 /** will rename to genTsType in next major release */
-export function getTsType(
+export function genTsType(
   o: any,
   options: {
     /* indentation options */
@@ -18,6 +18,8 @@ export function getTsType(
     /* array options */
     allowEmptyArray?: boolean;
     allowMultiTypedArray?: boolean;
+    // only effective to object array
+    allowOptionalFieldInArray?: boolean;
   } = {},
 ): string {
   const type = typeof o;
@@ -42,6 +44,7 @@ export function getTsType(
       const currentIndent = options.currentIndent || '';
       const indentStep = options.indentStep || '  ';
       const innerIndent = currentIndent + indentStep;
+      const nextLevelOption = { ...options, currentIndent: innerIndent };
       if (Array.isArray(o)) {
         if (o.length < 1) {
           if (options.allowEmptyArray) {
@@ -49,42 +52,78 @@ export function getTsType(
           }
           throw new TypeError('cannot determine type of empty array');
         }
+        // least 1 element
+        if (options.allowOptionalFieldInArray) {
+          const nonObjectTypes = new Set<string>();
+          const fields = new Map<
+            string,
+            { types: Set<string>; count: number }
+          >();
+          for (const x of o) {
+            if (
+              x &&
+              typeof x === 'object' &&
+              !(x instanceof Date) &&
+              !(x instanceof Map) &&
+              !(x instanceof Set)
+            ) {
+              // really object
+              for (const [key, value] of Object.entries(x)) {
+                const type = genTsType(value, options);
+              }
+            } else {
+              // not object
+              nonObjectTypes.add(genTsType(x, options));
+            }
+          }
+        }
+        if (
+          options.allowOptionalFieldInArray &&
+          o.every(
+            x =>
+              x &&
+              typeof x === 'object' &&
+              !(x instanceof Date) &&
+              !(x instanceof Map) &&
+              !(x instanceof Set),
+          )
+        ) {
+          const fields = new Map<string, number>();
+          const total = 0;
+        }
         const childTypes = Array.from(
-          new Set(
-            o.map(x =>
-              getTsType(x, { ...options, currentIndent: innerIndent }),
-            ),
-          ),
+          new Set(o.map(x => genTsType(x, nextLevelOption))),
         );
         if (childTypes.length === 1) {
-          return `Array<${getTsType(o[0], options)}>`;
+          return `Array<${genTsType(o[0], options)}>`;
         }
         if (options.allowMultiTypedArray) {
           return `Array<${childTypes.join(' | ')}>`;
         }
         console.error('array of different types, childTypes:', childTypes);
         throw new Error('array of different types');
-      } else {
-        if (options.format) {
-          let res = '{';
-          Object.entries(o).forEach(([k, v]) => {
-            res += `\n${innerIndent}${JSON.stringify(k)}: ${getTsType(v, {
-              ...options,
-              currentIndent: innerIndent,
-            })};`;
-          });
-          res += '\n' + currentIndent + '}';
-          return res;
-        }
-        return `{ ${Object.entries(o)
-          .map(([k, v]) => `${JSON.stringify(k)}: ${getTsType(v, options)}`)
-          .join('; ')} }`;
       }
+      // TODO set, map
+      // really object
+      if (options.format) {
+        let res = '{';
+        Object.entries(o).forEach(([k, v]) => {
+          res += `\n${innerIndent}${JSON.stringify(k)}: ${genTsType(
+            v,
+            nextLevelOption,
+          )};`;
+        });
+        res += '\n' + currentIndent + '}';
+        return res;
+      }
+      return `{ ${Object.entries(o)
+        .map(([k, v]) => `${JSON.stringify(k)}: ${genTsType(v, options)}`)
+        .join('; ')} }`;
     default:
       console.error('unknown type', { type, o });
       throw new TypeError('unknown type: ' + type);
   }
 }
 
-/** will rename to genTsType in next major release */
-export let genTsType = getTsType;
+/** @deprecated will rename to genTsType in next major release */
+export let getTsType = genTsType;
