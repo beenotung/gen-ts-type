@@ -16,10 +16,10 @@ format=1 allowEmptyArray=1 allowMultiTypedArray=1 gen-ts-type package.json | tee
 ```
 ### From typescript
 ```typescript
-import { getTsType } from 'gen-ts-type';
+import { genTsType } from 'gen-ts-type';
 import * as fs from 'fs';
 
-const UserType = getTsType(
+const UserType = genTsType(
     { user: 'Alice', friends: [{ user: 'Bob', since: new Date() }] },
     { format: true },
   );
