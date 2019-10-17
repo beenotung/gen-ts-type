@@ -15,12 +15,20 @@ export function wrapType(type: string): string {
   return `(${type})`;
 }
 
-export function andType(aType: string, bType: string): string {
+export function biOpType(op: string, aType: string, bType: string): string {
   if (aType === '{}') {
     return bType;
   }
   if (bType === '{}') {
     return aType;
   }
-  return wrapType(aType) + ' & ' + wrapType(bType);
+  return wrapType(aType) + ` ${op} ` + wrapType(bType);
+}
+
+export function andType(aType: string, bType: string): string {
+  return biOpType('&', aType, bType);
+}
+
+export function orType(aType: string, bType: string): string {
+  return biOpType('|', aType, bType);
 }
