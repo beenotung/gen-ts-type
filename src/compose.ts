@@ -8,7 +8,12 @@ export function wrapType(type: string): string {
     // has one and only one bracket
     return type;
   }
-  if (type.startsWith('(') && type.endsWith(')')) {
+  if (
+    type.startsWith('(') &&
+    type.endsWith(')') &&
+    type.indexOf('(', 1) === -1 &&
+    type.indexOf(')') === type.length - 1
+  ) {
     // already wrapped
     return type;
   }
