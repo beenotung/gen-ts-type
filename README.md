@@ -52,6 +52,6 @@ export type User = {
 - named custom type
 
 ### Todo features
-- Tuple (specific array) (e.g. `[number, string, string]`)
+- Tuple (specific-type array) (e.g. `[number, string, string]`)
 - specific symbol / string / number
 - Enum
