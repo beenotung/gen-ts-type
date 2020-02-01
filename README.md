@@ -29,10 +29,10 @@ fs.writeFileSync('types.ts', code);
 Above example generate into:
 ```typescript
 export type User = {
-  "user": string;
-  "friends": Array<{
-    "user": string;
-    "since": Date;
+  user: string;
+  friends: Array<{
+    user: string;
+    since: Date;
   }>;
 }
 ```

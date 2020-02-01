@@ -1,6 +1,7 @@
 import { mapGetOrSetDefault } from '@beenotung/tslib/map';
 /* name -> type */
 import { genFunctionType } from './function-type';
+import { toObjectKey } from './object-key';
 
 const typeMap = new Map<string, string>();
 
@@ -8,20 +9,21 @@ export function setTsType(name: string, type: string): void {
   typeMap.set(name, type);
 }
 
-/** will rename to genTsType in next major release */
+export type genTsTypeOptions = {
+  /* indentation options */
+  format?: boolean;
+  currentIndent?: string | '';
+  indentStep?: string | '  ';
+  /* array options */
+  allowEmptyArray?: boolean;
+  allowMultiTypedArray?: boolean;
+  // only effective to object array
+  allowOptionalFieldInArray?: boolean;
+}
+
 export function genTsType(
   o: any,
-  options: {
-    /* indentation options */
-    format?: boolean;
-    currentIndent?: string | '';
-    indentStep?: string | '  ';
-    /* array options */
-    allowEmptyArray?: boolean;
-    allowMultiTypedArray?: boolean;
-    // only effective to object array
-    allowOptionalFieldInArray?: boolean;
-  } = {},
+  options: genTsTypeOptions = {},
 ): string {
   const type = typeof o;
   switch (type) {
@@ -56,10 +58,8 @@ export function genTsType(
         // least 1 element
         if (options.allowOptionalFieldInArray) {
           const nonObjectTypes = new Set<string>();
-          const fields = new Map<
-            string,
-            { types: Set<string>; count: number }
-          >();
+          const fields = new Map<string,
+            { types: Set<string>; count: number }>();
           let total = 0;
           for (const x of o) {
             if (
@@ -87,7 +87,7 @@ export function genTsType(
           }
           let res = 'Array<{';
           fields.forEach((field, key) => {
-            res += '\n' + innerIndent + JSON.stringify(key);
+            res += '\n' + innerIndent + toObjectKey(key);
             if (field.count === total) {
               // all items has this field
               res += ':';
@@ -141,7 +141,7 @@ export function genTsType(
       if (options.format) {
         let res = '{';
         Object.entries(o).forEach(([k, v]) => {
-          res += `\n${innerIndent}${JSON.stringify(k)}: ${genTsType(
+          res += `\n${innerIndent}${toObjectKey(k)}: ${genTsType(
             v,
             nextLevelOption,
           )};`;
@@ -150,7 +150,7 @@ export function genTsType(
         return res;
       }
       return `{ ${Object.entries(o)
-        .map(([k, v]) => `${JSON.stringify(k)}: ${genTsType(v, options)}`)
+        .map(([k, v]) => `${toObjectKey(k)}: ${genTsType(v, options)}`)
         .join('; ')} }`;
     default:
       console.error('unknown type', { type, o });
