@@ -40,15 +40,16 @@ export type User = {
 ## Features
 
 ### Supported features
-- string
+- primitive types
+  * string
+  * number
+  * boolean
+  * bigint
+  * Date
+  * symbol (not specific)
+- Array (single-type / union-type)
+- Object (strict-type / optional-type)
 - named custom type
-- number
-- boolean
-- bigint
-- symbol (not specific)
-- Date
-- Array (single-type / multi-type)
-- Object
 
 ### Todo features
 - Tuple (specific array) (e.g. `[number, string, string]`)
