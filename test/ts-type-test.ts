@@ -1,6 +1,11 @@
-import { genTsType, genTsTypeOptions } from '../src/ts-type';
+import { genTsType, GenTsTypeOptions } from '../src/ts-type';
 
-function test(name: string, expectedType: string, data: any, options?: genTsTypeOptions) {
+function test(
+  name: string,
+  expectedType: string,
+  data: any,
+  options?: GenTsTypeOptions,
+) {
   let generatedType = genTsType(data, options);
   if (generatedType !== expectedType) {
     console.error('failed:', name);
@@ -35,21 +40,10 @@ test(
   { allowOptionalFieldInArray: true },
 );
 
-test(
-  'Set',
-  `Set<number>`,
-  new Set([1, 2]),
-);
+test('Set', `Set<number>`, new Set([1, 2]));
 
-test(
-  'Set with multiple type',
-  `Set<number | string>`,
-  new Set([1, 2, 'str']),
-  { allowMultiTypedArray: true },
-);
+test('Set with multiple type', `Set<number | string>`, new Set([1, 2, 'str']), {
+  allowMultiTypedArray: true,
+});
 
-test(
-  'Map',
-  `Map<string, number>`,
-  new Map([['age', 12]]),
-);
+test('Map', `Map<string, number>`, new Map([['age', 12]]));

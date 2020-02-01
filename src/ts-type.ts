@@ -9,7 +9,7 @@ export function setTsType(name: string, type: string): void {
   typeMap.set(name, type);
 }
 
-export type genTsTypeOptions = {
+export interface GenTsTypeOptions {
   /* indentation options */
   format?: boolean;
   currentIndent?: string | '';
@@ -21,10 +21,7 @@ export type genTsTypeOptions = {
   allowOptionalFieldInArray?: boolean;
 }
 
-export function genTsType(
-  o: any,
-  options: genTsTypeOptions = {},
-): string {
+export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
   const type = typeof o;
   switch (type) {
     case 'function':
@@ -58,8 +55,10 @@ export function genTsType(
         // least 1 element
         if (options.allowOptionalFieldInArray) {
           const nonObjectTypes = new Set<string>();
-          const fields = new Map<string,
-            { types: Set<string>; count: number }>();
+          const fields = new Map<
+            string,
+            { types: Set<string>; count: number }
+          >();
           let total = 0;
           for (const x of o) {
             if (
