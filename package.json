@@ -36,7 +36,7 @@
     "test": "test"
   },
   "dependencies": {
-    "@beenotung/tslib": "^14.13.0"
+    "@beenotung/tslib": "^16.41.0"
   },
   "devDependencies": {
     "@types/node": "8",
