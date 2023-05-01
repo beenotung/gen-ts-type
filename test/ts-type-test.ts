@@ -29,6 +29,18 @@ test(
   { user: 'Alice', friends: [{ user: 'Bob', since: new Date() }] },
   { format: true },
 );
+test(
+  'nested Object and Array with formatting',
+  `{
+  user: string
+  friends: Array<{
+    user: string
+    since: Date
+  }>
+}`,
+  { user: 'Alice', friends: [{ user: 'Bob', since: new Date() }] },
+  { format: true, semi: false },
+);
 
 test(
   'Array of Object with optional field',
@@ -38,6 +50,15 @@ test(
 }>`,
   [{ name: 'Alice' }, { name: 'Bob', nickname: 'Charlie' }],
   { allowOptionalFieldInArray: true },
+);
+test(
+  'Array of Object with optional field',
+  `Array<{
+  name: string
+  nickname?: string
+}>`,
+  [{ name: 'Alice' }, { name: 'Bob', nickname: 'Charlie' }],
+  { allowOptionalFieldInArray: true, semi: false },
 );
 
 test('Set', `Set<number>`, new Set([1, 2]));

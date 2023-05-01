@@ -12,6 +12,7 @@ export function setTsType(name: string, type: string): void {
 export interface GenTsTypeOptions {
   /* indentation options */
   format?: boolean;
+  semi?: boolean; // default: true
   currentIndent?: string | '';
   indentStep?: string | '  ';
   /* array options */
@@ -94,7 +95,10 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
               // only some items has this field, this field is optional
               res += '?:';
             }
-            res += ' ' + Array.from(field.types).join(' | ') + ';';
+            res += ' ' + Array.from(field.types).join(' | ');
+            if (options.semi !== false) {
+              res += ';';
+            }
           });
           res += '\n' + currentIndent + '}>';
           nonObjectTypes.forEach(type => (res += ' | ' + type));
@@ -143,7 +147,10 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
           res += `\n${innerIndent}${toObjectKey(k)}: ${genTsType(
             v,
             nextLevelOption,
-          )};`;
+          )}`;
+          if (options.semi !== false) {
+            res += ';';
+          }
         });
         res += '\n' + currentIndent + '}';
         return res;
