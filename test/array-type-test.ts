@@ -1,4 +1,3 @@
-import { writeFileSync } from 'fs';
 import { genTsType } from '../src/ts-type';
 
 let expectedType = `{
@@ -7,7 +6,7 @@ let expectedType = `{
     name: string
     friends: Array<{
       id: number
-    }> | any[]
+    }>
   }>
 }`;
 
@@ -25,8 +24,6 @@ let reflectedType = genTsType(sample, {
   allowOptionalFieldInArray: true,
   allowMultiTypedArray: true,
 });
-
-writeFileSync('sample.ts', 'export type Root = ' + reflectedType);
 
 if (reflectedType !== expectedType) {
   console.error("reflected array type doesn't match");

@@ -95,6 +95,7 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
               // only some items has this field, this field is optional
               res += '?:';
             }
+            cleanEmptyArrayType(field.types);
             res += ' ' + Array.from(field.types).join(' | ');
             if (options.semi !== false) {
               res += ';';
@@ -108,7 +109,7 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
           new Set(o.map(x => genTsType(x, nextLevelOption))),
         );
         if (childTypes.length === 1) {
-          return `Array<${genTsType(o[0], nextLevelOption)}>`;
+          return `Array<${genTsType(o[0], options)}>`;
         }
         if (options.allowMultiTypedArray) {
           return `Array<${childTypes.join(' | ')}>`;
@@ -166,6 +167,24 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
     default:
       console.error('unknown type', { type, o });
       throw new TypeError('unknown type: ' + type);
+  }
+}
+
+function cleanEmptyArrayType(types: Set<string>) {
+  if (types.size < 2) {
+    return;
+  }
+
+  let hasNonEmpty = false;
+  for (const type of types) {
+    if (type.startsWith('Array<')) {
+      hasNonEmpty = true;
+      break;
+    }
+  }
+
+  if (hasNonEmpty) {
+    types.delete('any[]');
   }
 }
 
