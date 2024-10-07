@@ -20,9 +20,9 @@ let sample = {
 let reflectedType = genTsType(sample, {
   format: true,
   semi: false,
-  allowEmptyArray: true,
-  allowOptionalFieldInArray: true,
-  allowMultiTypedArray: true,
+  // allowEmptyArray: true,
+  // allowOptionalFieldInArray: true,
+  // allowMultiTypedArray: true,
 });
 
 if (reflectedType !== expectedType) {

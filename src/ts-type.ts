@@ -16,10 +16,10 @@ export interface GenTsTypeOptions {
   currentIndent?: string | '';
   indentStep?: string | '  ';
   /* array options */
-  allowEmptyArray?: boolean;
+  allowEmptyArray?: boolean; // default: true
   allowMultiTypedArray?: boolean;
   // only effective to object array
-  allowOptionalFieldInArray?: boolean;
+  allowOptionalFieldInArray?: boolean; // default: true
 }
 
 export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
@@ -45,16 +45,19 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
       const currentIndent = options.currentIndent || '';
       const indentStep = options.indentStep || '  ';
       const innerIndent = currentIndent + indentStep;
+      const allowEmptyArray = options.allowEmptyArray !== false;
+      const allowOptionalFieldInArray =
+        options.allowOptionalFieldInArray !== false;
       const nextLevelOption = { ...options, currentIndent: innerIndent };
       if (Array.isArray(o)) {
         if (o.length < 1) {
-          if (options.allowEmptyArray) {
+          if (allowEmptyArray) {
             return 'any[]';
           }
           throw new TypeError('cannot determine type of empty array');
         }
         // least 1 element
-        if (options.allowOptionalFieldInArray) {
+        if (allowOptionalFieldInArray !== false) {
           const nonObjectTypes = new Set<string>();
           const fields = new Map<
             string,
@@ -85,25 +88,36 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
               nonObjectTypes.add(genTsType(x, nextLevelOption));
             }
           }
-          let res = 'Array<{';
-          fields.forEach((field, key) => {
-            res += '\n' + innerIndent + toObjectKey(key);
+          let objectType = '{';
+          for (const [key, field] of fields) {
+            objectType += '\n' + innerIndent + toObjectKey(key);
             if (field.count === total) {
               // all items has this field
-              res += ':';
+              objectType += ':';
             } else {
               // only some items has this field, this field is optional
-              res += '?:';
+              objectType += '?:';
             }
             cleanEmptyArrayType(field.types);
-            res += ' ' + Array.from(field.types).join(' | ');
-            if (options.semi !== false) {
-              res += ';';
+            if (
+              field.types.size === 1 &&
+              field.types.has('any[]') &&
+              !allowEmptyArray
+            ) {
+              throw new TypeError('cannot determine type of empty array');
             }
-          });
-          res += '\n' + currentIndent + '}>';
-          nonObjectTypes.forEach(type => (res += ' | ' + type));
-          return res;
+            objectType += ' ' + Array.from(field.types).join(' | ');
+            if (options.semi !== false) {
+              objectType += ';';
+            }
+          }
+          objectType += '\n' + currentIndent + '}';
+          const types: string[] = [];
+          if (fields.size > 0) {
+            types.push(objectType);
+          }
+          types.push(...nonObjectTypes);
+          return `Array<${types.join(' | ')}>`;
         }
         const childTypes = Array.from(
           new Set(o.map(x => genTsType(x, nextLevelOption))),
@@ -119,7 +133,7 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
       }
       if (o instanceof Set) {
         if (o.size < 1) {
-          if (options.allowEmptyArray) {
+          if (allowEmptyArray) {
             return 'Set<any>';
           }
           throw new TypeError('cannot determine type of empty set');
@@ -131,7 +145,7 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
       }
       if (o instanceof Map) {
         if (o.size < 1) {
-          if (options.allowEmptyArray) {
+          if (allowEmptyArray) {
             return 'Map<any>';
           }
           throw new TypeError('cannot determine type of empty map');
