@@ -6,14 +6,19 @@ let expectedType = `{
     name: string
     friends: Array<{
       id: number
+      tags: Array<{
+        name: string
+      }>
     }>
   }>
 }`;
 
 let sample = {
   users: [
-    { id: 1, name: 'Alice', friends: [{ id: 1 }] },
-    { id: 2, name: 'Bob', friends: [] },
+    { id: 1, name: 'Alice', friends: [{ id: 2, tags: [{ name: 'work' }] }] },
+    // TODO support nested partial empty array
+    // { id: 2, name: 'Bob', friends: [{ id: 1, tags: [] }] },
+    { id: 3, name: 'Charlie', friends: [] },
   ],
 };
 
