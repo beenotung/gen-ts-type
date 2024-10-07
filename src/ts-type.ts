@@ -72,7 +72,7 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
               // really object
               total++;
               for (const [key, value] of Object.entries(x)) {
-                const type = genTsType(value, options);
+                const type = genTsType(value, nextLevelOption);
                 const field = mapGetOrSetDefault(fields, key, () => ({
                   types: new Set(),
                   count: 0,
@@ -82,7 +82,7 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
               }
             } else {
               // not object
-              nonObjectTypes.add(genTsType(x, options));
+              nonObjectTypes.add(genTsType(x, nextLevelOption));
             }
           }
           let res = 'Array<{';
@@ -108,7 +108,7 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
           new Set(o.map(x => genTsType(x, nextLevelOption))),
         );
         if (childTypes.length === 1) {
-          return `Array<${genTsType(o[0], options)}>`;
+          return `Array<${genTsType(o[0], nextLevelOption)}>`;
         }
         if (options.allowMultiTypedArray) {
           return `Array<${childTypes.join(' | ')}>`;
@@ -123,7 +123,10 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
           }
           throw new TypeError('cannot determine type of empty set');
         }
-        return genTsType(Array.from(o), options).replace('Array', 'Set');
+        return genTsType(Array.from(o), nextLevelOption).replace(
+          'Array',
+          'Set',
+        );
       }
       if (o instanceof Map) {
         if (o.size < 1) {
@@ -133,10 +136,12 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
           throw new TypeError('cannot determine type of empty map');
         }
         const keyType = Array.from(
-          new Set(Array.from(o.keys()).map(x => genTsType(x, options))),
+          new Set(Array.from(o.keys()).map(x => genTsType(x, nextLevelOption))),
         ).join(' | ');
         const valueType = Array.from(
-          new Set(Array.from(o.values()).map(x => genTsType(x, options))),
+          new Set(
+            Array.from(o.values()).map(x => genTsType(x, nextLevelOption)),
+          ),
         ).join(' | ');
         return `Map<${keyType}, ${valueType}>`;
       }
@@ -156,7 +161,7 @@ export function genTsType(o: any, options: GenTsTypeOptions = {}): string {
         return res;
       }
       return `{ ${Object.entries(o)
-        .map(([k, v]) => `${toObjectKey(k)}: ${genTsType(v, options)}`)
+        .map(([k, v]) => `${toObjectKey(k)}: ${genTsType(v, nextLevelOption)}`)
         .join('; ')} }`;
     default:
       console.error('unknown type', { type, o });
