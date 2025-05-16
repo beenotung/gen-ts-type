@@ -1,4 +1,4 @@
-import { readFile } from '@beenotung/tslib/fs';
+import { readFile } from 'fs/promises';
 import { catchMain } from '@beenotung/tslib/node';
 import { readStreamAllLine } from '@beenotung/tslib/stream';
 import { getTsType } from './ts-type';

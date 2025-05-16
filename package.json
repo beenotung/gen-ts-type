@@ -17,36 +17,24 @@
     "gen-ts-type": "gen-ts-type.js"
   },
   "scripts": {
-    "test": "npm run rawtest",
     "clean": "rimraf node_modules/@beenotung/tslib/index.* dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "postformat": "tslint -p . --fix",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "pretest": "npm run format && npm run build",
-    "rawtest": "ts-node test/index.ts",
-    "prepublishOnly": "npm run rawtest && npm run build"
-  },
-  "husky": {
-    "hook": {
-      "pre-commit": "npm run format"
-    }
+    "build": "npm run clean && tsc",
+    "test": "npm run format && npm run build && ts-node test/index.ts",
+    "prepublishOnly": "npm test"
   },
   "directories": {
     "test": "test"
   },
   "dependencies": {
-    "@beenotung/tslib": "^16.41.0"
+    "@beenotung/tslib": "^24.7.0"
   },
   "devDependencies": {
-    "@types/node": "8",
-    "husky": "^2.3.0",
-    "prettier": "^1.17.1",
-    "rimraf": "^2.6.3",
-    "ts-node": "^8.1.0",
-    "tslint": "^5.16.0",
-    "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.4.5"
+    "@types/node": "^22.15.18",
+    "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "repository": {
     "type": "git",
