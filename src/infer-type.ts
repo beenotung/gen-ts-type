@@ -86,8 +86,10 @@ export class Type {
 
   private toMapType(options: ToTypeStringOptions): string {
     let { key, value } = this.map!;
-    let keyType = key.map(key => key.toString(options)).join(' | ');
-    let valueType = value.map(value => value.toString(options)).join(' | ');
+    let keyType =
+      key.map(key => key.toString(options)).join(' | ') || 'unknown';
+    let valueType =
+      value.map(value => value.toString(options)).join(' | ') || 'unknown';
     return `Map<${keyType}, ${valueType}>`;
   }
 
@@ -115,6 +117,9 @@ export class Type {
     object: { key: string; type: Type }[],
     options: ToTypeStringOptions,
   ): string {
+    if (object.length == 0) {
+      return '{}';
+    }
     let indent_step = options.indent_step ?? '  ';
     let type = '{';
     let is_all_key_safe = object.every(field => isSafeObjectKey(field.key));
@@ -275,6 +280,7 @@ export function inferType(json: unknown, options: InferTypeOptions = {}): Type {
 
   function walkObject(object: object, type: Type) {
     let keys = Object.keys(object);
+    type.object ||= [];
     for (let key of keys) {
       let value = (object as any)[key];
       let valueType = inferType(
@@ -283,7 +289,6 @@ export function inferType(json: unknown, options: InferTypeOptions = {}): Type {
         `${type.path}['${key}']`,
       );
       valueType.is_object_field = true;
-      type.object ||= [];
       let field = type.object.find(field => field.key == key);
       if (!field) {
         if (type.instance_count != 1) {

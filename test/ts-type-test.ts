@@ -131,3 +131,8 @@ test('Set with multiple type', `Set<number | string>`, new Set([1, 2, 'str']), {
 });
 
 test('Map', `Map<string, number>`, new Map([['age', 12]]));
+
+test('Empty Array', `Array<unknown>`, []);
+test('Empty Set', `Set<unknown>`, new Set());
+test('Empty Map', `Map<unknown, unknown>`, new Map());
+test('Empty Object', `{}`, {});
