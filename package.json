@@ -11,10 +11,21 @@
   ],
   "author": "Beeno Tung <aabbcc1241@yahoo.com.hk> (https://beeno-tung.surge.sh)",
   "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beenotung/gen-ts-type.git"
+  },
+  "homepage": "https://github.com/beenotung/gen-ts-type#readme",
+  "bugs": {
+    "url": "https://github.com/beenotung/gen-ts-type/issues"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
     "gen-ts-type": "gen-ts-type.js"
+  },
+  "directories": {
+    "test": "test"
   },
   "files": [
     "dist",
@@ -27,9 +38,6 @@
     "test": "npm run format && npm run build && ts-node test/index.ts",
     "prepublishOnly": "npm test"
   },
-  "directories": {
-    "test": "test"
-  },
   "dependencies": {
     "@beenotung/tslib": "^24.7.0"
   },
@@ -40,12 +48,4 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/beenotung/gen-ts-type.git"
-  },
-  "bugs": {
-    "url": "https://github.com/beenotung/gen-ts-type/issues"
-  },
-  "homepage": "https://github.com/beenotung/gen-ts-type#readme"
 }
