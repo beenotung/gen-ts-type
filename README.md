@@ -1,85 +1,166 @@
 # gen-ts-type
 
-Generate Typescript type from sample data
+Generate TypeScript types from sample data in browser, node.js, and cli.
 
-[![npm Package Version](https://img.shields.io/npm/v/gen-ts-type.svg?maxAge=2592000)](https://www.npmjs.com/package/gen-ts-type)
+[![npm Package Version](https://img.shields.io/npm/v/gen-ts-type)](https://www.npmjs.com/package/gen-ts-type)
 
 ## Installation
 
 ```bash
+# Install as dev dependency, then use with "npx gen-ts-type"
+npm i -D gen-ts-type
+
+# Or install as global dependency, then use with "gen-ts-type"
 npm i -g gen-ts-type
 ```
 
 ## Usage
 
-### From cli
+### Usage from CLI
 
 ```bash
-echo 'export type Package = ' | tee package.d.ts
-format=1 allowEmptyArray=1 allowMultiTypedArray=1 gen-ts-type package.json | tee -a package.d.ts
+# Generate type from stdin
+echo -n 'export type PackageJSON = ' > package.d.ts
+echo '{"name": "test", "version": "1.0.0"}' | npx gen-ts-type >> package.d.ts
+
+# Generate type from a JSON file
+export=true name=PackageJSON npx gen-ts-type package.json > package.d.ts
 ```
 
-### List of optional environment variables
+Generated type in file `package.d.ts` will be like:
 
-Output options:
+```typescript
+export type PackageJSON = {
+  name: string
+  version: string
+}
+```
 
-- `name`: declare as named type, if not set, the type will be anonymous.
-- `export`: export the type, default: `false`
+#### CLI Environment Variables
 
-Formatting options:
+Type Declaration Options:
 
-- `indent`: initial indent level, default: `''` (no indent)
-- `indent_step`: indent step, default: `'  '` (2 spaces)
-- `semi_colon`: add semicolon after each object property, default: `false`
-- `include_sample`: include sample value in the comment, default: `false`
+- `name`: Declare as named type (e.g. `type User = ...`)
+- `export`: Export the type declaration (default: `false`)
 
-Type inference options:
+Formatting Options:
 
-- `union_type`: `false` to collapse all variants of objects in array as optional fields, `true` to use union type without optional fields, default: `false`
+- `indent`: Initial indent level (default: `''`, i.e. no indent)
+- `indent_step`: Indent step size (default: `'  '`, i.e. 2 spaces)
+- `semi_colon`: Add semicolons after object properties (default: `false`)
+- `include_sample`: Include sample values in comments (default: `false`)
 
-### From typescript
+Type Inference Options:
+
+- `union_type`: Use union of exact types for array objects instead of optional fields (default: `false`)
+
+### Usage from TypeScript
 
 ```typescript
 import { genTsType } from 'gen-ts-type'
-import * as fs from 'fs'
+import { writeFileSync } from 'fs'
 
-const UserType = genTsType(
-  { user: 'Alice', friends: [{ user: 'Bob', since: new Date() }] },
-  { format: true },
+const type = genTsType(
+  {
+    name: 'Alice',
+    friends: [{ name: 'Bob', since: new Date() }],
+  },
+  {
+    export: true,
+    name: 'User',
+    semi_colon: true,
+  },
 )
-const code = `export type User = ${UserType};`
-fs.writeFileSync('types.ts', code)
+
+writeFileSync('user.d.ts', type)
 ```
 
-Above example generate into:
+Generated type in file `user.d.ts` will be:
 
 ```typescript
 export type User = {
-  user: string
+  name: string
   friends: Array<{
-    user: string
+    name: string
     since: Date
   }>
 }
 ```
 
+#### TypeScript API Options
+
+When using the `genTsType` function, you can provide options via an object:
+
+```typescript
+interface GenTsTypeOptions {
+  // Type Declaration
+  name?: string
+  export?: boolean
+
+  // Formatting
+  indent?: string
+  indent_step?: string
+  semi_colon?: boolean
+  include_sample?: boolean
+
+  // Type Inference
+  union_type?: boolean
+}
+```
+
+Example with union_type:
+
+```typescript
+// Data:
+const data = [
+  { name: 'Alice', year: 2000 },
+  { name: 'Bob', age: 20 },
+]
+
+// With union_type=false (default):
+type Data = Array<{
+  name: string
+  year?: number
+  age?: number
+}>
+
+// With union_type=true:
+type Data = Array<
+  | {
+      name: string
+      year: number
+    }
+  | {
+      name: string
+      age: number
+    }
+>
+```
+
 ## Features
 
-### Supported features
+### Supported Types
 
-- primitive types
+- Primitive Types
   - string
   - number
   - boolean
   - bigint
   - Date
-  - symbol (not specific)
-- Array (single-type / union-type)
-- Object (strict-type / optional-type)
-- named custom type
+  - symbol
+  - null
+  - undefined
+- Complex Types
+  - Array (single-type and union-type)
+  - Set
+  - Map
+  - Object (with optional properties)
+  - Function
 
-### Todo features
+### Type Inference Features
 
-- Tuple (specific-type array) (e.g. `[number, string, string]`)
-- specific symbol / string / number
-- Enum
+- Detect array of varies object shape, and collapse into optional property or union type
+- Union type support for array elements and object properties
+- Special character handling in object keys
+- Nested object and array support
+- Generic type inference for collections (Array/Set/Map)
