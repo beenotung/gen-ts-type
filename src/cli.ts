@@ -12,6 +12,10 @@ export async function main(filename?: string) {
   }
   const json = JSON.parse(content);
   const type = genTsType(json, {
+    /* GenTsTypeOptions */
+    name: getString('name'),
+    export: getBoolean('export'),
+
     /* InferTypeOptions */
     indent: getString('indent'),
     indent_step: getString('indent_step'),

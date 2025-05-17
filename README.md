@@ -21,6 +21,11 @@ format=1 allowEmptyArray=1 allowMultiTypedArray=1 gen-ts-type package.json | tee
 
 ### List of optional environment variables
 
+Output options:
+
+- `name`: declare as named type, if not set, the type will be anonymous.
+- `export`: export the type, default: `false`
+
 Formatting options:
 
 - `indent`: initial indent level, default: `''` (no indent)

@@ -136,3 +136,13 @@ test('Empty Array', `Array<unknown>`, []);
 test('Empty Set', `Set<unknown>`, new Set());
 test('Empty Map', `Map<unknown, unknown>`, new Map());
 test('Empty Object', `{}`, {});
+
+test(
+  'export named type',
+  `export type PackageJSON = {
+  name: string
+  version: string
+}`,
+  { name: 'gen-ts-type', version: '2.0.0' },
+  { export: true, name: 'PackageJSON' },
+);
