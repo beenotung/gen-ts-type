@@ -4,6 +4,81 @@ Generate TypeScript types from sample data in browser, node.js, and cli.
 
 [![npm Package Version](https://img.shields.io/npm/v/gen-ts-type)](https://www.npmjs.com/package/gen-ts-type)
 
+## Quick Example
+
+From CLI:
+
+```bash
+# Generate type from JSON file
+echo -n 'export type User = ' > user.d.ts
+npx -y gen-ts-type user.json >> user.d.ts
+```
+
+From TypeScript:
+
+```typescript
+import { genTsType } from 'gen-ts-type'
+import { writeFileSync } from 'fs'
+const data = {
+  name: 'Alice',
+  age: 20,
+  hobbies: ['coding', 'reading'],
+  contact: {
+    email: 'alice@example.com',
+    phone: null,
+  },
+  lastLogin: new Date(),
+}
+
+const code = genTsType(data, { export: true, name: 'User' })
+writeFileSync('user.d.ts', code)
+```
+
+Generated type:
+
+```typescript
+export type User = {
+  name: string
+  age: number
+  hobbies: Array<string>
+  contact: {
+    email: string
+    phone: null
+  }
+  lastLogin: Date
+}
+```
+
+See [Usage](#usage) section below for more options and advanced features.
+
+## Features
+
+### Supported Types
+
+- Primitive Types
+  - string
+  - number
+  - boolean
+  - bigint
+  - Date
+  - symbol
+  - null
+  - undefined
+- Complex Types
+  - Array (single-type and union-type)
+  - Set
+  - Map
+  - Object (with optional properties)
+  - Function
+
+### Type Inference Features
+
+- Detect array of varies object shape, and collapse into optional property or union type
+- Union type support for array elements and object properties
+- Special character handling in object keys
+- Nested object and array support
+- Generic type inference for collections (Array/Set/Map)
+
 ## Installation
 
 ```bash
@@ -110,6 +185,8 @@ interface GenTsTypeOptions {
 
 ### Advanced Usage with Lower-level APIs
 
+More examples in [examples/advanced-usage.ts](examples/advanced-usage.ts) and [test/ts-type-test.ts](test/ts-type-test.ts)
+
 #### Modify Inferred Type Structure
 
 For more control over the type generation process, you can use the lower-level `inferType()` function and `Type` class directly:
@@ -201,31 +278,3 @@ type Data = Array<
     }
 >
 ```
-
-## Features
-
-### Supported Types
-
-- Primitive Types
-  - string
-  - number
-  - boolean
-  - bigint
-  - Date
-  - symbol
-  - null
-  - undefined
-- Complex Types
-  - Array (single-type and union-type)
-  - Set
-  - Map
-  - Object (with optional properties)
-  - Function
-
-### Type Inference Features
-
-- Detect array of varies object shape, and collapse into optional property or union type
-- Union type support for array elements and object properties
-- Special character handling in object keys
-- Nested object and array support
-- Generic type inference for collections (Array/Set/Map)
