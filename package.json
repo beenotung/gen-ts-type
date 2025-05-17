@@ -32,6 +32,7 @@
     "gen-ts-type.js"
   ],
   "scripts": {
+    "upload": "surge public",
     "dev": "esbuild --bundle --outfile=public/bundle.js public/app.ts --watch",
     "clean": "rimraf node_modules/@beenotung/tslib/index.* dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -47,6 +48,7 @@
     "esbuild": "^0.25.3",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
+    "surge": "^0.24.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },

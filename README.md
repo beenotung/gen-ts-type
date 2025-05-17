@@ -4,6 +4,8 @@ Generate TypeScript types from sample data in browser, node.js, and cli.
 
 [![npm Package Version](https://img.shields.io/npm/v/gen-ts-type)](https://www.npmjs.com/package/gen-ts-type)
 
+> 🔥 Use it directly on [Online Playground](https://gen-ts-type.surge.sh)
+
 ## Quick Example
 
 From CLI:
