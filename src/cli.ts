@@ -12,11 +12,29 @@ export async function main(filename?: string) {
   }
   const json = JSON.parse(content);
   const type = genTsType(json, {
-    format: !!process.env.format,
-    allowEmptyArray: !!process.env.allowEmptyArray,
-    allowMultiTypedArray: !!process.env.allowMultiTypedArray,
+    /* formatting options */
+    format: toBoolean(process.env.format),
+    semi: toBoolean(process.env.semi),
+    currentIndent: process.env.currentIndent,
+    indentStep: process.env.indentStep,
+    /* array options */
+    allowEmptyArray: toBoolean(process.env.allowEmptyArray),
+    allowMultiTypedArray: toBoolean(process.env.allowMultiTypedArray),
+    allowOptionalFieldInArray: toBoolean(process.env.allowOptionalFieldInArray),
   });
   console.log(type);
+}
+
+function toBoolean(value: string | undefined) {
+  value = (value || '').toLowerCase();
+  switch (value) {
+    case '1':
+    case 'true':
+    case 'on':
+      return true;
+    default:
+      return false;
+  }
 }
 
 const filename = process.argv[2];

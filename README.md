@@ -19,6 +19,21 @@ echo 'export type Package = ' | tee package.d.ts
 format=1 allowEmptyArray=1 allowMultiTypedArray=1 gen-ts-type package.json | tee -a package.d.ts
 ```
 
+### List of optional environment variables
+
+Formatting options:
+
+- `format`: format the output with indentation
+- `semi`: add semicolon after each property
+- `currentIndent`: current indent
+- `indentStep`: indent step
+
+Array options:
+
+- `allowEmptyArray`: allow empty array
+- `allowMultiTypedArray`: allow multi-typed array
+- `allowOptionalFieldInArray`: allow optional field in array
+
 ### From typescript
 
 ```typescript
