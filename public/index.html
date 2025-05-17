@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gen-ts-type</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 50rem;
+        margin: 0 auto;
+        padding: 1.25rem;
+        line-height: 1.5;
+      }
+      code {
+        display: inline-block;
+        background-color: #f0f0f0;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.25rem;
+        margin: 0.5rem 0;
+        font-size: 1em;
+        font-family: 'Courier New', Courier, monospace;
+      }
+      .input-group {
+        margin: 1rem 0;
+      }
+      .input-group label {
+        display: inline-block;
+        min-width: 8rem;
+      }
+      .input-group input[type='text'],
+      .input-group textarea {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        width: 100%;
+        max-width: 40rem;
+        font-family: 'Courier New', Courier, monospace;
+      }
+      .input-group textarea {
+        min-height: 10rem;
+      }
+      .checkbox-group {
+        margin: 0.5rem 0;
+      }
+      .checkbox-group label {
+        margin-right: 1rem;
+      }
+      header {
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1rem;
+      }
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .header-content h1 {
+        margin: 0;
+      }
+      .github-link {
+        color: #333;
+        text-decoration: none;
+      }
+      .github-link:hover {
+        color: #666;
+      }
+      main {
+        min-height: calc(100vh - 200px);
+      }
+      footer {
+        margin-top: 3rem;
+        padding: 1rem 0;
+        text-align: center;
+        color: #666;
+        border-top: 1px solid #eee;
+      }
+      .output {
+        margin-top: 2rem;
+      }
+      .output pre {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+      }
+      .error {
+        color: #d32f2f;
+        background: #ffebee;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        margin: 1rem 0;
+        display: none;
+      }
+      .error.visible {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <h1>gen-ts-type</h1>
+        <a
+          href="https://github.com/beenotung/gen-ts-type"
+          class="github-link"
+          target="_blank"
+        >
+          <svg height="24" viewBox="0 0 16 16" width="24">
+            <path
+              fill="currentColor"
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+            ></path>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <p>
+        Generate TypeScript types from sample data. Input your JSON data and
+        customize the output options below.
+      </p>
+
+      <div class="input-section">
+        <div class="input-group">
+          <label>Sample Data (JSON):</label>
+          <textarea
+            id="jsonInput"
+            placeholder='{
+  "name": "Alice",
+  "age": 20,
+  "hobbies": ["coding", "reading"],
+  "contact": {
+    "email": "alice@example.com",
+    "phone": null
+  }
+}'
+          ></textarea>
+        </div>
+
+        <div class="input-group">
+          <label>Type Name:</label>
+          <input type="text" id="typeName" placeholder="e.g. User" />
+        </div>
+
+        <h3>Options:</h3>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="exportType" />
+            Export type
+          </label>
+          <label>
+            <input type="checkbox" id="semiColon" />
+            Add semicolons
+          </label>
+          <label>
+            <input type="checkbox" id="includeSample" />
+            Include samples
+          </label>
+          <label>
+            <input type="checkbox" id="unionType" />
+            Use union types
+          </label>
+        </div>
+
+        <div class="input-group">
+          <label>Initial Indent:</label>
+          <input type="text" id="indent" placeholder="Default: ''" />
+        </div>
+
+        <div class="input-group">
+          <label>Indent Step:</label>
+          <input
+            type="text"
+            id="indentStep"
+            placeholder="Default: '  ' (2 spaces)"
+          />
+        </div>
+      </div>
+
+      <div class="error" id="errorMessage"></div>
+
+      <div class="output">
+        <h3>Generated Type:</h3>
+        <pre><code id="outputType"></code></pre>
+      </div>
+    </main>
+
+    <footer>
+      Made with ❤️ by
+      <a target="_blank" href="https://github.com/beenotung">Beeno</a>
+    </footer>
+
+    <script src="bundle.js"></script>
+  </body>
+</html>

@@ -7,3 +7,4 @@ dist/
 *.tgz
 /package.d.ts
 sample.ts
+public/bundle.js
