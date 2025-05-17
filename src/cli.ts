@@ -12,6 +12,7 @@ export async function main(filename?: string) {
   }
   const json = JSON.parse(content);
   const type = genTsType(json, {
+    include_sample: toBoolean(process.env.include_sample),
     /* formatting options */
     format: toBoolean(process.env.format),
     semi: toBoolean(process.env.semi),

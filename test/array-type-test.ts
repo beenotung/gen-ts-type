@@ -16,18 +16,13 @@ let expectedType = `{
 let sample = {
   users: [
     { id: 1, name: 'Alice', friends: [{ id: 2, tags: [{ name: 'work' }] }] },
-    // TODO support nested partial empty array
-    // { id: 2, name: 'Bob', friends: [{ id: 1, tags: [] }] },
+    { id: 2, name: 'Bob', friends: [{ id: 1, tags: [] }] },
     { id: 3, name: 'Charlie', friends: [] },
   ],
 };
 
 let reflectedType = genTsType(sample, {
-  format: true,
-  semi: false,
-  // allowEmptyArray: true,
-  // allowOptionalFieldInArray: true,
-  // allowMultiTypedArray: true,
+  semi_colon: false,
 });
 
 if (reflectedType !== expectedType) {

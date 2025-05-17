@@ -1,30 +1,12 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "allowJs": false,
-    "sourceMap": true,
+    "strict": true,
     "declaration": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noImplicitThis": true,
-    "skipLibCheck": true,
-    "lib": [
-      "es2015"
-    ],
-    "downlevelIteration": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "es5",
+    "target": "es2022",
     "outDir": "dist"
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
-  "compileOnSave": false,
-  "atom": {
-    "rewriteTsconfig": false
-  }
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

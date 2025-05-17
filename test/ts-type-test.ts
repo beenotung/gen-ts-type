@@ -27,7 +27,7 @@ test(
   }>;
 }`,
   { user: 'Alice', friends: [{ user: 'Bob', since: new Date() }] },
-  { format: true },
+  { semi_colon: true },
 );
 test(
   'nested Object and Array with formatting',
@@ -39,7 +39,7 @@ test(
   }>
 }`,
   { user: 'Alice', friends: [{ user: 'Bob', since: new Date() }] },
-  { format: true, semi: false },
+  { semi_colon: false },
 );
 
 test(
@@ -49,7 +49,7 @@ test(
   nickname?: string;
 }>`,
   [{ name: 'Alice' }, { name: 'Bob', nickname: 'Charlie' }],
-  { allowOptionalFieldInArray: true },
+  { union_type: false, semi_colon: true },
 );
 test(
   'Array of Object with optional field',
@@ -58,13 +58,46 @@ test(
   nickname?: string
 }>`,
   [{ name: 'Alice' }, { name: 'Bob', nickname: 'Charlie' }],
-  { allowOptionalFieldInArray: true, semi: false },
+  { union_type: false, semi_colon: false },
+);
+
+test(
+  'Nested Object with different types in array (collapse)',
+  `Array<{
+  items: Array<{
+    name: string
+    age?: number
+    year?: number
+  }>
+}>`,
+  [
+    { items: [{ name: 'Alice', age: 30 }] },
+    { items: [{ name: 'Alice', year: 2000 }] },
+  ],
+  { union_type: false },
+);
+test(
+  'Nested Object with different types in array (union type)',
+  `Array<{
+  items: Array<{
+    name: string
+    age: number
+  } | {
+    name: string
+    year: number
+  }>
+}>`,
+  [
+    { items: [{ name: 'Alice', age: 30 }] },
+    { items: [{ name: 'Alice', year: 2000 }] },
+  ],
+  { union_type: true },
 );
 
 test('Set', `Set<number>`, new Set([1, 2]));
 
 test('Set with multiple type', `Set<number | string>`, new Set([1, 2, 'str']), {
-  allowMultiTypedArray: true,
+  union_type: true,
 });
 
 test('Map', `Map<string, number>`, new Map([['age', 12]]));
