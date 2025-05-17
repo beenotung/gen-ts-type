@@ -108,7 +108,72 @@ interface GenTsTypeOptions {
 }
 ```
 
-Example with union_type:
+### Advanced Usage with Lower-level APIs
+
+#### Modify Inferred Type Structure
+
+For more control over the type generation process, you can use the lower-level `inferType()` function and `Type` class directly:
+
+```typescript
+import { inferType, Type } from 'gen-ts-type'
+
+// Infer type structure without generating type declaration
+let userType: Type = inferType({
+  name: 'Alice',
+  friends: [{ name: 'Bob', since: new Date() }],
+})
+
+// Make the User.friends[number].since field optional
+{
+  let friendType = userType.object![1].type.array![0]
+  let sinceType = friendType.object![1].type
+  sinceType.optional = true
+}
+
+// Add User.is_admin field
+{
+  let isAdminType = new Type({ path: '', indent: '  ' })
+  isAdminType.primitive = [true]
+  isAdminType.nullable = true
+  userType.object!.push({
+    key: 'is_admin',
+    type: isAdminType,
+  })
+}
+
+// Generate type declaration with custom options
+let code = 'export type User = '
+code += userType.toString({
+  include_sample: true,
+  semi_colon: true,
+})
+
+console.log(code)
+```
+
+The output of above example:
+
+```typescript
+export type User = {
+  name: string /** e.g. "Alice" */
+  friends: Array<{
+    name: string /** e.g. "Bob" */
+    since?: Date /** e.g. "2025-05-17T08:35:10.429Z" */
+  }>
+  is_admin: null | boolean /** e.g. true */
+}
+```
+
+The Type class provides access to the inferred type structure:
+
+- `type.object`: Array of object fields `{ key: string, type: Type }`
+- `type.array`: Array of element types
+- `type.primitive`: Array of primitive values
+- `type.nullable`: Whether the type includes null
+- `type.optional`: Whether the type includes undefined
+- `type.toString(options)`: Generate type declaration string
+
+#### Example with union_type
 
 ```typescript
 // Data:
