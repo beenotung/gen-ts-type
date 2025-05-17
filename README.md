@@ -23,16 +23,14 @@ format=1 allowEmptyArray=1 allowMultiTypedArray=1 gen-ts-type package.json | tee
 
 Formatting options:
 
-- `format`: format the output with indentation
-- `semi`: add semicolon after each property
-- `currentIndent`: current indent
-- `indentStep`: indent step
+- `indent`: initial indent level, default: `''` (no indent)
+- `indent_step`: indent step, default: `'  '` (2 spaces)
+- `semi_colon`: add semicolon after each object property, default: `false`
+- `include_sample`: include sample value in the comment, default: `false`
 
-Array options:
+Type inference options:
 
-- `allowEmptyArray`: allow empty array
-- `allowMultiTypedArray`: allow multi-typed array
-- `allowOptionalFieldInArray`: allow optional field in array
+- `union_type`: `false` to collapse all variants of objects in array as optional fields, `true` to use union type without optional fields, default: `false`
 
 ### From typescript
 

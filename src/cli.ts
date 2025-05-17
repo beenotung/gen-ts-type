@@ -12,29 +12,45 @@ export async function main(filename?: string) {
   }
   const json = JSON.parse(content);
   const type = genTsType(json, {
-    include_sample: toBoolean(process.env.include_sample),
-    /* formatting options */
-    format: toBoolean(process.env.format),
-    semi: toBoolean(process.env.semi),
-    currentIndent: process.env.currentIndent,
-    indentStep: process.env.indentStep,
-    /* array options */
-    allowEmptyArray: toBoolean(process.env.allowEmptyArray),
-    allowMultiTypedArray: toBoolean(process.env.allowMultiTypedArray),
-    allowOptionalFieldInArray: toBoolean(process.env.allowOptionalFieldInArray),
+    /* InferTypeOptions */
+    indent: getString('indent'),
+    indent_step: getString('indent_step'),
+    union_type: getBoolean('union_type'),
+
+    /* ToTypeStringOptions */
+    include_sample: getBoolean('include_sample'),
+    semi_colon: getBoolean('semi_colon'),
+    // indent_step: getString('indent_step'), // shared with InferTypeOptions
   });
   console.log(type);
 }
 
-function toBoolean(value: string | undefined) {
-  value = (value || '').toLowerCase();
-  switch (value) {
+function getString(key: string): string | undefined {
+  let value =
+    process.env[key] ??
+    process.env[key.toUpperCase()] ??
+    process.env[key.toLowerCase()];
+  return value;
+}
+
+function getBoolean(key: string): boolean {
+  let value = getString(key);
+  switch ((value || '').toLowerCase()) {
     case '1':
     case 'true':
     case 'on':
+    case 'yes':
+    case 'enable':
       return true;
-    default:
+    case '0':
+    case 'false':
+    case 'off':
+    case 'no':
+    case 'disable':
+    case '':
       return false;
+    default:
+      throw new Error(`Invalid boolean value: ${JSON.stringify(value)}`);
   }
 }
 
