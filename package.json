@@ -1,6 +1,6 @@
 {
   "name": "gen-ts-type",
-  "version": "1.9.1",
+  "version": "2.0.0",
   "description": "Generate TypeScript types from sample data in browser, node.js, and cli.",
   "keywords": [
     "typescript",
