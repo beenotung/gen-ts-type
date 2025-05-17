@@ -1,4 +1,5 @@
 import { genFunctionType } from './function-type';
+import { isSafeObjectKey, toSafeObjectKey } from './object-key';
 
 type TypeOptions = {
   path: string;
@@ -116,14 +117,18 @@ export class Type {
   ): string {
     let indent_step = options.indent_step ?? '  ';
     let type = '{';
+    let is_all_key_safe = object.every(field => isSafeObjectKey(field.key));
     for (let field of object) {
       if (options.include_sample && field.type.primitive != undefined) {
         type += `\n${this.indent}  /** e.g. ${JSON.stringify(field.type.primitive)} */`;
       }
+      type += `\n${this.indent}${indent_step}`;
+      let key = is_all_key_safe ? field.key : toSafeObjectKey(field.key);
+      let value = field.type.toString(options);
       if (field.type.optional) {
-        type += `\n${this.indent}${indent_step}${field.key}?: ${field.type.toString(options)}`;
+        type += `${key}?: ${value}`;
       } else {
-        type += `\n${this.indent}${indent_step}${field.key}: ${field.type.toString(options)}`;
+        type += `${key}: ${value}`;
       }
       if (options.semi_colon) {
         type += `;`;

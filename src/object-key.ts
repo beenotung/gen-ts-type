@@ -1,21 +1,30 @@
-function isSafeObjectKey(key: string): boolean {
+export function isSafeObjectKey(key: string): boolean {
   if (key.length === 0) {
     return false;
   }
-  if (!key[0].match(/[a-z]/i)) {
-    return false;
-  }
-  for (let i = 1; i < key.length; i++) {
-    if (!key[i].match(/[a-z]|[0-9]|_/i)) {
-      return false;
+  for (let char of key) {
+    if (char === '_') {
+      continue;
     }
+    if ('a' <= char && char <= 'z') {
+      continue;
+    }
+    if ('A' <= char && char <= 'Z') {
+      continue;
+    }
+    if ('0' <= char && char <= '9') {
+      continue;
+    }
+    return false;
   }
   return true;
 }
 
-export function toObjectKey(key: string): string {
-  if (isSafeObjectKey(key)) {
-    return key;
+export function toSafeObjectKey(key: string): string {
+  let double_quote = JSON.stringify(key);
+  if (key.includes("'")) {
+    return double_quote;
   }
-  return JSON.stringify(key);
+  let value = double_quote.slice(1, -1);
+  return `'${value}'`;
 }

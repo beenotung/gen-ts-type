@@ -94,6 +94,36 @@ test(
   { union_type: true },
 );
 
+test(
+  'Object with key having special characters',
+  `{
+  name: string
+  bin: {
+    'gen-ts-type': string
+  }
+  devDependencies: {
+    '@types/node': string
+  }
+  mixed_object: {
+    'no_space': string
+    'has space': string
+  }
+}`,
+  {
+    name: 'gen-ts-type',
+    bin: {
+      'gen-ts-type': 'gen-ts-type.js',
+    },
+    devDependencies: {
+      '@types/node': '^22.15.18',
+    },
+    mixed_object: {
+      no_space: 'sample_value',
+      'has space': 'sample value',
+    },
+  },
+);
+
 test('Set', `Set<number>`, new Set([1, 2]));
 
 test('Set with multiple type', `Set<number | string>`, new Set([1, 2, 'str']), {
