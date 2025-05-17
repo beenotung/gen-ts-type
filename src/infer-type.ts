@@ -27,6 +27,7 @@ export class Type {
     key: string;
     type: Type;
   }[];
+  union_object?: Map<string, Type>[];
   primitive?: unknown[];
   function?: Function[];
   path: string;
@@ -60,7 +61,10 @@ export class Type {
       types.push(this.toMapType(options));
     }
     if (this.object) {
-      types.push(this.toObjectType(options));
+      types.push(this.toObjectType(this.object, options));
+    }
+    if (this.union_object) {
+      types.push(this.toUnionObjectType(options));
     }
     if (this.primitive != undefined) {
       types.push(this.toPrimitiveType(options));
@@ -106,10 +110,13 @@ export class Type {
     return type;
   }
 
-  private toObjectType(options: ToTypeStringOptions): string {
+  private toObjectType(
+    object: { key: string; type: Type }[],
+    options: ToTypeStringOptions,
+  ): string {
     let indent_step = options.indent_step ?? '  ';
     let type = '{';
-    for (let field of this.object!) {
+    for (let field of object) {
       if (options.include_sample && field.type.primitive != undefined) {
         type += `\n${this.indent}  /** e.g. ${JSON.stringify(field.type.primitive)} */`;
       }
@@ -124,6 +131,15 @@ export class Type {
     }
     type += `\n${this.indent}}`;
     return type;
+  }
+
+  private toUnionObjectType(options: ToTypeStringOptions): string {
+    return this.union_object!.map(fields =>
+      this.toObjectType(
+        Array.from(fields, ([key, type]) => ({ key, type })),
+        options,
+      ),
+    ).join(' | ');
   }
 
   private toPrimitiveType(options: ToTypeStringOptions): string {
@@ -231,7 +247,11 @@ export function inferType(json: unknown, options: InferTypeOptions = {}): Type {
       } else if (json instanceof Set) {
         walkSet(json, type);
       } else {
-        walkObject(json, type);
+        if (union_type) {
+          walkUnionObject(json, type);
+        } else {
+          walkObject(json, type);
+        }
       }
     } else {
       addPrimitive(json, type);
@@ -272,6 +292,39 @@ export function inferType(json: unknown, options: InferTypeOptions = {}): Type {
       if (!keys.includes(field.key)) {
         field.type.optional = true;
       }
+    }
+    type.instance_count++;
+  }
+
+  function walkUnionObject(object: object, type: Type) {
+    let keys = Object.keys(object);
+    let fields = new Map<string, Type>();
+    for (let key of keys) {
+      let value = (object as any)[key];
+      let valueType = inferType(
+        value,
+        type.indent + indent_step,
+        `${type.path}['${key}']`,
+      );
+      valueType.is_object_field = true;
+      fields.set(key, valueType);
+    }
+    type.union_object ||= [];
+    let existing_fields = type.union_object.find(existing_fields => {
+      if (existing_fields.size != fields.size) return false;
+      for (let key of existing_fields.keys()) {
+        if (!fields.has(key)) return false;
+      }
+      for (let key of fields.keys()) {
+        let existing_type = existing_fields.get(key);
+        if (!existing_type) return false;
+        let new_type = fields.get(key);
+        if (existing_type.toString() != new_type?.toString()) return false;
+      }
+      return true;
+    });
+    if (!existing_fields) {
+      type.union_object.push(fields);
     }
     type.instance_count++;
   }
