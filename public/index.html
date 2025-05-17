@@ -12,15 +12,6 @@
         padding: 1.25rem;
         line-height: 1.5;
       }
-      code {
-        display: inline-block;
-        background-color: #f0f0f0;
-        padding: 0.5rem 0.75rem;
-        border-radius: 0.25rem;
-        margin: 0.5rem 0;
-        font-size: 1em;
-        font-family: 'Courier New', Courier, monospace;
-      }
       .input-group {
         margin: 1rem 0;
       }
@@ -45,6 +36,7 @@
       }
       .checkbox-group label {
         margin-right: 1rem;
+        display: inline-block;
       }
       header {
         margin-bottom: 2rem;
@@ -62,9 +54,6 @@
       .github-link {
         color: #333;
         text-decoration: none;
-      }
-      .github-link:hover {
-        color: #666;
       }
       main {
         min-height: calc(100vh - 200px);
@@ -84,6 +73,10 @@
         padding: 1rem;
         border-radius: 0.5rem;
         overflow-x: auto;
+        max-height: 31.25rem;
+        overflow-y: auto;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1rem;
       }
       .error {
         color: #d32f2f;
@@ -95,6 +88,44 @@
       }
       .error.visible {
         display: block;
+      }
+      .output-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+      .copy-button {
+        padding: 0.5rem 1rem;
+        background: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+      }
+      .copy-button:hover {
+        background: #e0e0e0;
+      }
+      .copy-button.copied {
+        background: #4caf50;
+        color: white;
+        border-color: #43a047;
+      }
+      .output pre::-webkit-scrollbar {
+        width: 0.5rem;
+        height: 0.5rem;
+      }
+      .output pre::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 0.25rem;
+      }
+      .output pre::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 0.25rem;
+      }
+      .output pre::-webkit-scrollbar-thumb:hover {
+        background: #999;
       }
     </style>
   </head>
@@ -183,7 +214,10 @@
       <div class="error" id="errorMessage"></div>
 
       <div class="output">
-        <h3>Generated Type:</h3>
+        <div class="output-header">
+          <h3>Generated Type:</h3>
+          <button id="copyButton" class="copy-button">Copy</button>
+        </div>
         <pre><code id="outputType"></code></pre>
       </div>
     </main>

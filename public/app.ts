@@ -18,6 +18,7 @@ let indent = querySelector('#indent') as HTMLInputElement
 let indentStep = querySelector('#indentStep') as HTMLInputElement
 let errorMessage = querySelector('#errorMessage') as HTMLInputElement
 let outputType = querySelector('#outputType') as HTMLInputElement
+let copyButton = querySelector('#copyButton') as HTMLButtonElement
 
 window.addEventListener('input', () => {
   updateOutput()
@@ -54,3 +55,21 @@ function updateOutput() {
 }
 
 updateOutput()
+
+copyButton.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(outputType.textContent || '')
+    copyButton.textContent = 'Copied!'
+    copyButton.classList.add('copied')
+    setTimeout(() => {
+      copyButton.textContent = 'Copy'
+      copyButton.classList.remove('copied')
+    }, 2000)
+  } catch (err) {
+    console.error('Failed to copy:', err)
+    copyButton.textContent = 'Failed to copy'
+    setTimeout(() => {
+      copyButton.textContent = 'Copy'
+    }, 2000)
+  }
+})
