@@ -16,6 +16,10 @@
   "bin": {
     "gen-ts-type": "gen-ts-type.js"
   },
+  "files": [
+    "dist",
+    "gen-ts-type.js"
+  ],
   "scripts": {
     "clean": "rimraf node_modules/@beenotung/tslib/index.* dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
