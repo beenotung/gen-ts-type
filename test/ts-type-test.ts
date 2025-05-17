@@ -138,11 +138,29 @@ test('Empty Map', `Map<unknown, unknown>`, new Map());
 test('Empty Object', `{}`, {});
 
 test(
-  'export named type',
+  'Export Named Type',
   `export type PackageJSON = {
   name: string
   version: string
 }`,
   { name: 'gen-ts-type', version: '2.0.0' },
   { export: true, name: 'PackageJSON' },
+);
+
+test(
+  'Include Sample Value',
+  `{
+  name: string /** e.g. "Alice" */
+  friends: Array<{
+    name: string /** e.g. "Bob" */
+    since: Date /** e.g. "2025-05-17T08:30:42.123Z" */
+  }>
+}`,
+  {
+    name: 'Alice',
+    friends: [{ name: 'Bob', since: new Date('2025-05-17T08:30:42.123Z') }],
+  },
+  {
+    include_sample: true,
+  },
 );
